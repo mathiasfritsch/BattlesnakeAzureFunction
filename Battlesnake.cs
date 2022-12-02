@@ -16,7 +16,7 @@ namespace BattlesnakeAzureFunction
         public static async Task<IActionResult> Echo(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "echo")] HttpRequest request)
         {
-            return new OkObjectResult("OK1");
+            return new OkObjectResult("OK2");
         }
 
         [FunctionName("Get")]
@@ -63,6 +63,7 @@ namespace BattlesnakeAzureFunction
             {
                 directionToTake = Direction.right;
             }
+            directionToTake = Direction.down;
 
             return new OkObjectResult(
                  new
