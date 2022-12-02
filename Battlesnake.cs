@@ -16,7 +16,7 @@ namespace BattlesnakeAzureFunction
         public static async Task<IActionResult> Echo(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "echo")] HttpRequest request)
         {
-            return new OkObjectResult("ok");
+            return new OkObjectResult("OK");
         }
 
         [FunctionName("Get")]
