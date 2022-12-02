@@ -28,7 +28,7 @@ namespace BattlesnakeAzureFunction
                 {
                     apiversion = "1",
                     author = "happyspider",
-                    color = "#118833",
+                    color = "#112288",
                     head = "silly",
                     tail = "default",
                     version = "1"
@@ -63,8 +63,7 @@ namespace BattlesnakeAzureFunction
             {
                 directionToTake = Direction.right;
             }
-            directionToTake = Direction.down;
-
+       
             return new OkObjectResult(
                  new
                  {
