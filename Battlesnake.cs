@@ -45,7 +45,7 @@ namespace BattlesnakeAzureFunction
             Direction[] DIRECTIONS = new Direction[] { Direction.North, Direction.West, Direction.South, Direction.East };
 
             var res = DIRECTIONS[1];
-            return new OkObjectResult(res);
+            return new OkObjectResult("down");
         }
 
         [FunctionName("End")]
