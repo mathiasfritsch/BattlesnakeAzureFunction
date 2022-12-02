@@ -13,7 +13,8 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-
+    env:
+      AZURE_FUNCTIONAPP_PACKAGE_PATH: '.'
     steps:
     - uses: actions/checkout@v3
     - name: Setup .NET
@@ -32,7 +33,9 @@ jobs:
         # Name of the Azure Function App
         app-name: BattlesnakeFunction
         # Path to package or folder. *.zip or a folder to deploy
-        package: .
+
+        package: '${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output'
+
         publish-profile:  ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
         # Automatically look up Java function app artifact from pom.xml (default: 'false'). When this is set to 'true', 'package' should point to the folder of host.json.
         respect-pom-xml: false
