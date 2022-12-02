@@ -16,7 +16,7 @@ namespace BattlesnakeAzureFunction
         public static async Task<IActionResult> Echo(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "echo")] HttpRequest request)
         {
-            return new OkObjectResult("OK");
+            return new OkObjectResult("OK1");
         }
 
         [FunctionName("Get")]
@@ -29,7 +29,7 @@ namespace BattlesnakeAzureFunction
                     apiversion = "1",
                     author = "happyspider",
                     color = "#118833",
-                    head = "default",
+                    head = "silly",
                     tail = "default",
                     version = "1"
                 });
