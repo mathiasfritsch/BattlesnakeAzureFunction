@@ -28,7 +28,7 @@ namespace BattlesnakeAzureFunction
                 {
                     apiversion = "1",
                     author = "happyspider",
-                    color = "#115566",
+                    color = "#118833",
                     head = "default",
                     tail = "default",
                     version = "1"
