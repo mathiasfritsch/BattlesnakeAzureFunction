@@ -21,19 +21,22 @@ namespace BattlesnakeAzureFunction.Model
             return new Coord(a.X + b.X, a.Y + b.Y);
         }
 
-        public Coord Advanced(Direction d) {
-            switch (d) {
-                case Direction.North:
-                    return new Coord(X, Y - 1);
-                case Direction.East:
-                    return new Coord(X + 1, Y);
-                case Direction.South:
-                    return new Coord(X, Y + 1);
-                case Direction.West:
-                    return new Coord(X - 1, Y);
-                default:
-                    throw new ArgumentException("Invalid value for Direction");
-            }
+        public Coord AboveMe()
+        {
+            return new Coord(X, Y + 1);
+        }
+        public Coord BelowMe()
+        {
+            return new Coord(X, Y -1);
+        }
+        public Coord LeftOfMe()
+        {
+            return new Coord(X-1, Y);
+        }
+
+        public Coord RightOfMe()
+        {
+            return new Coord(X +1 , Y);
         }
 
         #region IEquatable

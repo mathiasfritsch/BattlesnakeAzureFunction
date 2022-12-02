@@ -5,7 +5,6 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Newtonsoft.Json;
 using System;
-using System.Drawing;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -29,7 +28,7 @@ namespace BattlesnakeAzureFunction
                 {
                     apiversion = "1",
                     author = "happyspider",
-                    color = "#888888",
+                    color = "#115566",
                     head = "default",
                     tail = "default",
                     version = "1"
@@ -42,10 +41,36 @@ namespace BattlesnakeAzureFunction
         {
             var content = await new StreamReader(req.Body).ReadToEndAsync();
             GameState gameState = JsonConvert.DeserializeObject<GameState>(content);
-            Direction[] DIRECTIONS = new Direction[] { Direction.North, Direction.West, Direction.South, Direction.East };
+            Direction[] directions = new Direction[] { Direction.left, Direction.right, Direction.up, Direction.down };
+            Random rnd = new Random();
 
-            var res = DIRECTIONS[1];
-            return new OkObjectResult("down");
+            var head = gameState.You.Head;
+            var directionToTake = Direction.left;
+
+            if (gameState.Board.OnBoard(head.AboveMe()))
+            {
+                directionToTake = Direction.up;
+            }
+            else if (gameState.Board.OnBoard(head.BelowMe()))
+            {
+                directionToTake = Direction.down;
+            }
+            else if (gameState.Board.OnBoard(head.LeftOfMe()))
+            {
+                directionToTake = Direction.left;
+            }
+            else if (gameState.Board.OnBoard(head.RightOfMe()))
+            {
+                directionToTake = Direction.right;
+            }
+
+            return new OkObjectResult(
+                 new
+                 {
+                     move = directionToTake.ToString(),
+                     shout = "down" + directionToTake.ToString()
+                 }
+                );
         }
 
         [FunctionName("End")]

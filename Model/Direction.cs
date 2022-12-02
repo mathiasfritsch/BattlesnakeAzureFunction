@@ -3,9 +3,9 @@ using System;
 namespace BattlesnakeAzureFunction.Model
 {
     public enum Direction {
-        North = 0,
-        West = 1,
-        South = 2,
-        East = 3
+        left = 0,
+        right = 1,
+        up = 2,
+        down = 3
     }
 }
