@@ -5,7 +5,9 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace BattlesnakeAzureFunction
@@ -41,34 +43,39 @@ namespace BattlesnakeAzureFunction
         {
             var content = await new StreamReader(req.Body).ReadToEndAsync();
             GameState gameState = JsonConvert.DeserializeObject<GameState>(content);
-            Direction[] directions = new Direction[] { Direction.left, Direction.right, Direction.up, Direction.down };
+            var possibleDirections = new List<Direction> { Direction.left, Direction.right, Direction.up, Direction.down };
             Random rnd = new Random();
 
             var head = gameState.You.Head;
             var directionToTake = Direction.left;
 
-            if (gameState.Board.OnBoard(head.AboveMe()))
+            if (!gameState.Board.OnBoard(head.AboveMe()))
             {
-                directionToTake = Direction.up;
+                possibleDirections.Remove(Direction.up);
             }
-            else if (gameState.Board.OnBoard(head.BelowMe()))
+            if (!gameState.Board.OnBoard(head.BelowMe()))
             {
-                directionToTake = Direction.down;
+                possibleDirections.Remove(Direction.down);
             }
-            else if (gameState.Board.OnBoard(head.LeftOfMe()))
+            if (!(gameState.Board.OnBoard(head.LeftOfMe())))
             {
-                directionToTake = Direction.left;
+                possibleDirections.Remove(Direction.left);
             }
-            else if (gameState.Board.OnBoard(head.RightOfMe()))
+            if (!gameState.Board.OnBoard(head.RightOfMe()))
             {
-                directionToTake = Direction.right;
+                possibleDirections.Remove(Direction.right);
             }
-       
+
+            if(possibleDirections.Any())
+            {
+                directionToTake = possibleDirections[rnd.Next(possibleDirections.Count())];   
+            }
+
             return new OkObjectResult(
                  new
                  {
                      move = directionToTake.ToString(),
-                     shout = "down" + directionToTake.ToString()
+                     shout = "moving " + directionToTake.ToString()
                  }
                 );
         }

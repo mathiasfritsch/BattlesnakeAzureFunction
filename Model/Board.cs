@@ -17,14 +17,8 @@ namespace BattlesnakeAzureFunction.Model
         [JsonProperty("snakes")]
         public List<Snake> Snakes;
 
-        public bool OnBoard(Coord c)
-        {
-            return OnBoard(c.X, c.Y);
-        }
+        public bool OnBoard(Coord c) => OnBoard(c.X, c.Y);
 
-        public bool OnBoard(int x, int y)
-        {
-            return x >= 0 && y >= 0 && x < Width - 1 && y < Height - 1;
-        }
+        public bool OnBoard(int x, int y) => x >= 0 && y >= 0 && x <= Width - 1 && y <= Height - 1;
     }
 }
