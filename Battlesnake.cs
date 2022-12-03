@@ -75,7 +75,7 @@ namespace BattlesnakeAzureFunction
                 directionToTake = nonSelfDirections[new Random().Next(nonOffboardDirections.Count())];
             }
 
-            log.LogInformation($"Move: {directionToTake}");
+            log.LogInformation($"Game:{gameState.Game.ID} - {gameState.Turn}  Head:{gameState.You.Head}  - Move: {directionToTake}");
             
             return new OkObjectResult(
                  new
