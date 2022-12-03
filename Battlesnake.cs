@@ -70,7 +70,7 @@ namespace BattlesnakeAzureFunction
 
             if (nonSelfDirections.Any())
             {
-                directionToTake = nonOffboardDirections[new Random().Next(nonOffboardDirections.Count())];
+                directionToTake = nonSelfDirections[new Random().Next(nonOffboardDirections.Count())];
             }
 
             return new OkObjectResult(
