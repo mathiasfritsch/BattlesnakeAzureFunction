@@ -23,7 +23,7 @@ namespace BattlesnakeAzureFunction
 
         [FunctionName("Get")]
         public static async Task<IActionResult> GetBattlesnake(
-         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "battlesnake/")] HttpRequest request)
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "battlesnake/")] HttpRequest request)
         {
             return new OkObjectResult(
                 new
@@ -39,36 +39,38 @@ namespace BattlesnakeAzureFunction
 
         [FunctionName("Move")]
         public static async Task<IActionResult> Move(
-       [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "battlesnake/move")] HttpRequest req)
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "battlesnake/move")] HttpRequest req)
         {
             var content = await new StreamReader(req.Body).ReadToEndAsync();
             GameState gameState = JsonConvert.DeserializeObject<GameState>(content);
-            var possibleDirections = new List<Direction> { Direction.left, Direction.right, Direction.up, Direction.down };
-            Random rnd = new Random();
 
-            var head = gameState.You.Head;
+            var allDirections = new List<Direction> { Direction.left,
+                Direction.right,
+                Direction.up,
+                Direction.down };
+
             var directionToTake = Direction.left;
 
-            if (!gameState.Board.OnBoard(head.AboveMe()))
+            var nonOffboardDirections = new List<Direction>();
+
+            foreach (var possibleDirection in allDirections)
             {
-                possibleDirections.Remove(Direction.up);
-            }
-            if (!gameState.Board.OnBoard(head.BelowMe()))
-            {
-                possibleDirections.Remove(Direction.down);
-            }
-            if (!(gameState.Board.OnBoard(head.LeftOfMe())))
-            {
-                possibleDirections.Remove(Direction.left);
-            }
-            if (!gameState.Board.OnBoard(head.RightOfMe()))
-            {
-                possibleDirections.Remove(Direction.right);
+                if (gameState.Board.MoveStayOnBoad(possibleDirection, gameState.You.Head)) nonOffboardDirections.Add(possibleDirection);
             }
 
-            if(possibleDirections.Any())
+            var nonSelfDirections = new List<Direction>();
+
+            if (nonOffboardDirections.Any())
             {
-                directionToTake = possibleDirections[rnd.Next(possibleDirections.Count())];   
+                foreach (var possibleDirection in nonOffboardDirections)
+                {
+                    if (gameState.You.MoveDontTouchSelf(possibleDirection)) nonSelfDirections.Add(possibleDirection);
+                }
+            }
+
+            if (nonSelfDirections.Any())
+            {
+                directionToTake = nonOffboardDirections[new Random().Next(nonOffboardDirections.Count())];
             }
 
             return new OkObjectResult(
@@ -76,13 +78,12 @@ namespace BattlesnakeAzureFunction
                  {
                      move = directionToTake.ToString(),
                      shout = "moving " + directionToTake.ToString()
-                 }
-                );
+                 });
         }
 
         [FunctionName("End")]
         public static async Task<IActionResult> End(
- [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "battlesnake/end")] HttpRequest req)
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "battlesnake/end")] HttpRequest req)
         {
             var content = await new StreamReader(req.Body).ReadToEndAsync();
             GameState gameState = JsonConvert.DeserializeObject<GameState>(content);
@@ -92,7 +93,7 @@ namespace BattlesnakeAzureFunction
 
         [FunctionName("Start")]
         public static async Task<IActionResult> Start(
-[HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "battlesnake/start")] HttpRequest req)
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "battlesnake/start")] HttpRequest req)
         {
             var content = await new StreamReader(req.Body).ReadToEndAsync();
             GameState gameState = JsonConvert.DeserializeObject<GameState>(content);

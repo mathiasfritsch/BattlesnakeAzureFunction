@@ -1,18 +1,21 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Newtonsoft.Json;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace BattlesnakeAzureFunction.Model
 {
     /// <summary>
     /// Snake representation. Use the <see cref="Snake.ID"/> member to check for equality with other snakes.
     /// </summary>
-    public sealed class Snake {
+    public sealed class Snake
+    {
         [JsonProperty("id")]
         public readonly string ID;
+
         [JsonProperty("name")]
         public readonly string Name;
+
         [JsonProperty("health")]
         public readonly int Health;
 
@@ -23,14 +26,18 @@ namespace BattlesnakeAzureFunction.Model
         [JsonProperty("body")]
         public readonly List<Coord> Body;
 
+        public bool MoveDontTouchSelf(Direction direction) => Body.Where(p => p != Head).All(p => p != Head.Move(direction));
+
         /// <summary>
         /// Current real length of this snake in parts. Different to the count of body parts as the engine
         /// may repeat tail parts if the tail has not fully grown.
         /// </summary>
         /// <value></value>
         [JsonIgnore]
-        public int EffectiveLength {
-            get {
+        public int EffectiveLength
+        {
+            get
+            {
                 return Body.Count - GrowthLeft;
             }
         }
@@ -39,7 +46,8 @@ namespace BattlesnakeAzureFunction.Model
         /// Current head coordinate
         /// </summary>
         [JsonIgnore]
-        public Coord Head {
+        public Coord Head
+        {
             get { return Body[0]; }
         }
 
@@ -47,7 +55,8 @@ namespace BattlesnakeAzureFunction.Model
         /// Current tail coordinate
         /// </summary>
         [JsonIgnore]
-        public Coord Tail {
+        public Coord Tail
+        {
             get { return Body[Body.Count - 1]; }
         }
 
@@ -55,24 +64,28 @@ namespace BattlesnakeAzureFunction.Model
         /// Number of turns this snake will grow left
         /// </summary>
         [JsonIgnore]
-        public int GrowthLeft {
-            get {
+        public int GrowthLeft
+        {
+            get
+            {
                 // API stores duplicate body parts at end of snake if growing,
                 // thus can determine growth left
 
                 int result = 0;
                 var tail = Tail;
 
-                for (int i = Body.Count - 2; i >= 0; --i) {
+                for (int i = Body.Count - 2; i >= 0; --i)
+                {
                     if (Body[i] == tail) ++result;
                     else break;
                 }
-                
+
                 return result;
             }
         }
 
-        public override string ToString() {
+        public override string ToString()
+        {
             StringBuilder sb = new StringBuilder();
             sb.Append("<Snake, ID=");
             sb.Append(ID);
@@ -82,7 +95,8 @@ namespace BattlesnakeAzureFunction.Model
             sb.Append(GrowthLeft);
             sb.Append(", Body=[");
 
-            for (int i = 0; i < Body.Count; ++i) {
+            for (int i = 0; i < Body.Count; ++i)
+            {
                 if (i != 0) sb.Append(", ");
                 sb.Append(Body[i]);
             }
