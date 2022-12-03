@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.Azure.WebJobs.Host;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
@@ -43,8 +42,20 @@ namespace BattlesnakeAzureFunction
         public static async Task<IActionResult> Move(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "battlesnake/move")] HttpRequest req, ILogger log)
         {
-            var content = await new StreamReader(req.Body).ReadToEndAsync();
-            GameState gameState = JsonConvert.DeserializeObject<GameState>(content);
+            log.LogInformation($"Starting Move");
+            GameState gameState = null;
+
+            try
+            {
+                var content = await new StreamReader(req.Body).ReadToEndAsync();
+                gameState = JsonConvert.DeserializeObject<GameState>(content);
+            }
+            catch
+            {
+                log.LogInformation($"cant parse request");
+            }
+
+            log.LogInformation($"Parsed:{gameState.Game.ID} - {gameState.Turn}  Head:{gameState.You.Head}");
 
             var allDirections = new List<Direction> { Direction.left,
                 Direction.right,
@@ -76,7 +87,7 @@ namespace BattlesnakeAzureFunction
             }
 
             log.LogInformation($"Game:{gameState.Game.ID} - {gameState.Turn}  Head:{gameState.You.Head}  - Move: {directionToTake}");
-            
+
             return new OkObjectResult(
                  new
                  {
