@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
+using Microsoft.Azure.WebJobs.Host;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -39,7 +41,7 @@ namespace BattlesnakeAzureFunction
 
         [FunctionName("Move")]
         public static async Task<IActionResult> Move(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "battlesnake/move")] HttpRequest req)
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "battlesnake/move")] HttpRequest req, ILogger log)
         {
             var content = await new StreamReader(req.Body).ReadToEndAsync();
             GameState gameState = JsonConvert.DeserializeObject<GameState>(content);
@@ -73,6 +75,8 @@ namespace BattlesnakeAzureFunction
                 directionToTake = nonSelfDirections[new Random().Next(nonOffboardDirections.Count())];
             }
 
+            log.LogInformation($"Move: {directionToTake}");
+            
             return new OkObjectResult(
                  new
                  {
