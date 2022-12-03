@@ -43,19 +43,8 @@ namespace BattlesnakeAzureFunction
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "battlesnake/move")] HttpRequest req, ILogger log)
         {
             log.LogInformation($"Starting Move");
-            GameState gameState = null;
-
-            try
-            {
-                var content = await new StreamReader(req.Body).ReadToEndAsync();
-                gameState = JsonConvert.DeserializeObject<GameState>(content);
-            }
-            catch
-            {
-                log.LogInformation($"cant parse request");
-            }
-
-            log.LogInformation($"Parsed:{gameState.Game.ID} - {gameState.Turn}  Head:{gameState.You.Head}");
+            var content = await new StreamReader(req.Body).ReadToEndAsync();
+            var gameState = JsonConvert.DeserializeObject<GameState>(content);
 
             var allDirections = new List<Direction> { Direction.left,
                 Direction.right,
