@@ -5,10 +5,7 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace BattlesnakeAzureFunction
@@ -46,42 +43,19 @@ namespace BattlesnakeAzureFunction
             var content = await new StreamReader(req.Body).ReadToEndAsync();
             var gameState = JsonConvert.DeserializeObject<GameState>(content);
 
-            var allDirections = new List<Direction> { Direction.left,
-                Direction.right,
-                Direction.up,
-                Direction.down };
+            var sp = new SnakeProcessor(gameState);
 
-            var directionToTake = Direction.left;
+            var move = sp.StayOnboard()
+                .DontTouchYourself()
+                .GetMove();
 
-            var nonOffboardDirections = new List<Direction>();
-
-            foreach (var possibleDirection in allDirections)
-            {
-                if (gameState.Board.MoveStayOnBoad(possibleDirection, gameState.You.Head)) nonOffboardDirections.Add(possibleDirection);
-            }
-
-            var nonSelfDirections = new List<Direction>();
-
-            if (nonOffboardDirections.Any())
-            {
-                foreach (var possibleDirection in nonOffboardDirections)
-                {
-                    if (gameState.You.MoveDontTouchSelf(possibleDirection)) nonSelfDirections.Add(possibleDirection);
-                }
-            }
-
-            if (nonSelfDirections.Any())
-            {
-                directionToTake = nonSelfDirections[new Random().Next(nonSelfDirections.Count())];
-            }
-
-            log.LogInformation($"Game:{gameState.Game.ID} - {gameState.Turn}  Head:{gameState.You.Head}  - Move: {directionToTake}");
+            //log.LogInformation($"Game:{gameState.Game.ID} - {gameState.Turn}  Head:{gameState.You.Head}  - Move: {directionToTake}");
 
             return new OkObjectResult(
                  new
                  {
-                     move = directionToTake.ToString(),
-                     shout = "moving " + directionToTake.ToString()
+                     move = move.ToString(),
+                     shout = "moving " + move.ToString()
                  });
         }
 
