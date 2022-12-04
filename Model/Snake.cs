@@ -24,7 +24,7 @@ namespace BattlesnakeAzureFunction.Model
         /// if the snake has not fully grown
         /// </summary>
         [JsonProperty("body")]
-        public readonly List<Coord> Body;
+        public  List<Coord> Body;
 
         public bool MoveDontTouchSelf(Direction direction) => Body.Where(p => p != Head).All(p => p != Head.Move(direction));
 

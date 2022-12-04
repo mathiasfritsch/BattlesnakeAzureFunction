@@ -3,13 +3,13 @@ using System.Collections.Generic;
 
 namespace BattlesnakeAzureFunction.Model
 {
-    public sealed class Board
+    public  class Board
     {
         [JsonProperty("width")]
-        public readonly int Width;
+        public  int Width;
 
         [JsonProperty("height")]
-        public readonly int Height;
+        public  int Height;
 
         [JsonProperty("food")]
         public List<Coord> Food;

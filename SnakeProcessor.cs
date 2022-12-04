@@ -7,10 +7,10 @@ namespace BattlesnakeAzureFunction
 {
     public class SnakeProcessor
     {
-        private List<Direction> allowedDirections;
+        public List<Direction> AllowedDirections;
         private readonly GameState gameState;
 
-        private readonly List<Direction> allDirections = new List<Direction> {
+        public readonly List<Direction> allDirections = new List<Direction> {
                 Direction.left,
                 Direction.right,
                 Direction.up,
@@ -19,7 +19,7 @@ namespace BattlesnakeAzureFunction
         public SnakeProcessor(GameState gameState)
         {
             this.gameState = gameState;
-            this.allowedDirections = new List<Direction> {
+            this.AllowedDirections = new List<Direction> {
                 Direction.left,
                 Direction.right,
                 Direction.up,
@@ -30,12 +30,12 @@ namespace BattlesnakeAzureFunction
         {
             var nonOffboardDirections = new List<Direction>();
 
-            foreach (var possibleDirection in allowedDirections)
+            foreach (var possibleDirection in AllowedDirections)
             {
                 if (gameState.Board.MoveStayOnBoad(possibleDirection, gameState.You.Head))
                     nonOffboardDirections.Add(possibleDirection);
             }
-            allowedDirections = nonOffboardDirections;
+            AllowedDirections = nonOffboardDirections;
             return this;
         }
 
@@ -43,24 +43,24 @@ namespace BattlesnakeAzureFunction
         {
             var nonSelfDirections = new List<Direction>();
 
-            if (allowedDirections.Any())
+            if (AllowedDirections.Any())
             {
-                foreach (var possibleDirection in allowedDirections)
+                foreach (var possibleDirection in AllowedDirections)
                 {
                     if (gameState.You.MoveDontTouchSelf(possibleDirection)) nonSelfDirections.Add(possibleDirection);
                 }
             }
-            allowedDirections = nonSelfDirections;
+            AllowedDirections = nonSelfDirections;
             return this;
         }
 
         public SnakeProcessor DontGoToTightSpace()
         {
-            int minimumSpace = 3;
+            int minimumSpace = 4;
 
             var bigSpaceDirections = new List<Direction>();
 
-            foreach (var possibleDirection in allowedDirections)
+            foreach (var possibleDirection in AllowedDirections)
             {
                 var snake = gameState.You.Body.Distinct().ToList();
 
@@ -74,22 +74,30 @@ namespace BattlesnakeAzureFunction
                           snake.ToArray(),
                           minimumSpace);
 
-                    int size = ffc.FloodFill(headAfterMove.Move(directionForFloodFill));
+                    var floodFillPosition = headAfterMove.Move(directionForFloodFill);
+
+                    if (floodFillPosition.X < 0 ||
+                        floodFillPosition.X > gameState.Board.Width - 1||
+                        floodFillPosition.Y < 0 ||
+                        floodFillPosition.Y > gameState.Board.Height - 1 )
+                            continue;
+
+                    int size = ffc.FloodFill(floodFillPosition);
                     bestSize = size > bestSize ? size : bestSize;
                 }
-                if(bestSize >= minimumSpace)
-                bigSpaceDirections.Add(possibleDirection);
+                if (bestSize >= minimumSpace)
+                    bigSpaceDirections.Add(possibleDirection);
             }
 
-            this.allowedDirections = bigSpaceDirections;
+            this.AllowedDirections = bigSpaceDirections;
             return this;
         }
 
         public Direction GetMove()
         {
-            if (allowedDirections.Any())
+            if (AllowedDirections.Any())
             {
-                return allowedDirections[new Random().Next(allowedDirections.Count())];
+                return AllowedDirections[new Random().Next(AllowedDirections.Count())];
             }
 
             return Direction.left;
