@@ -46,7 +46,7 @@ stages:
     - task: PublishCodeCoverageResults@1
       inputs:
           codeCoverageTool: 'JaCoCo' # 'Cobertura' | 'JaCoCo'. Required. Code coverage tool. Default: JaCoCo.
-          summaryFileLocation: $(System.DefaultWorkingDirectory)/TestSnake/coverage.xml.
+          summaryFileLocation: $(System.DefaultWorkingDirectory)/TestSnake/**/coverage.xml.
     - task: ArchiveFiles@2
       displayName: 'Archive files'
       inputs:
