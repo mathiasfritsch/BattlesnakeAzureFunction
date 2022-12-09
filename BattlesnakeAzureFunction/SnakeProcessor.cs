@@ -56,9 +56,12 @@ namespace BattlesnakeAzureFunction
 
         public SnakeProcessor DontGoToTightSpace()
         {
-            int minimumSpace = 4;
-
+           
             var bigSpaceDirections = new List<Direction>();
+
+            if(AllowedDirections.Count <= 1) return this;
+
+            int bestSize = 0;
 
             foreach (var possibleDirection in AllowedDirections)
             {
@@ -67,26 +70,13 @@ namespace BattlesnakeAzureFunction
                 var headAfterMove = gameState.You.Head.Move(possibleDirection);
                 snake.Add(headAfterMove);
 
-                int bestSize = 0;
-                foreach (var directionForFloodFill in allDirections)
+                var ffc = new FloodFillCalculator(gameState.Board.Width,snake.ToArray());
+
+                int space = ffc.FloodFill(headAfterMove);
+                if(space >= bestSize)
                 {
-                    var ffc = new FloodFillCalculator(gameState.Board.Width,
-                          snake.ToArray(),
-                          minimumSpace);
-
-                    var floodFillPosition = headAfterMove.Move(directionForFloodFill);
-
-                    if (floodFillPosition.X < 0 ||
-                        floodFillPosition.X > gameState.Board.Width - 1||
-                        floodFillPosition.Y < 0 ||
-                        floodFillPosition.Y > gameState.Board.Height - 1 )
-                            continue;
-
-                    int size = ffc.FloodFill(floodFillPosition);
-                    bestSize = size > bestSize ? size : bestSize;
+                    this.AllowedDirections = bigSpaceDirections;
                 }
-                if (bestSize >= minimumSpace)
-                    bigSpaceDirections.Add(possibleDirection);
             }
 
             this.AllowedDirections = bigSpaceDirections;

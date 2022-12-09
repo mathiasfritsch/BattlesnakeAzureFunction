@@ -9,13 +9,12 @@ namespace BattlesnakeAzureFunction
         { notVisited, line, filled }
 
         private FloodFillState[,] board;
-        private int max;
         private int filledCounter = 0;
         private int size = 0;
 
-        public FloodFillCalculator(int size, Coord[] snake, int max)
+        public FloodFillCalculator(int size, Coord[] snake)
         {
-            this.max = max;
+      
             this.board = new FloodFillState[size, size];
             this.size = size;
 
@@ -32,8 +31,7 @@ namespace BattlesnakeAzureFunction
                 Direction.up,
                 Direction.down };
 
-            if (this.filledCounter >= max) return filledCounter;
-
+      
             if (this.board[position.X, position.Y] == FloodFillState.line ||
                 this.board[position.X, position.Y] == FloodFillState.filled
                 )
@@ -45,8 +43,7 @@ namespace BattlesnakeAzureFunction
             {
                 this.board[position.X, position.Y] = FloodFillState.filled;
                 this.filledCounter++;
-                if (this.filledCounter >= max) return filledCounter;
-
+        
                 foreach (var direction in allDirections)
                 {
                     var newPosition = position.Move(direction);

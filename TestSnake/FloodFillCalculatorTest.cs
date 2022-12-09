@@ -15,7 +15,7 @@ namespace TestSnake
             snake[1] = new Coord(1, 1);
             snake[2] = new Coord(1, 0);
 
-            var ffc = new FloodFillCalculator(5, snake,4);
+            var ffc = new FloodFillCalculator(5, snake);
 
             Assert.AreEqual(1,ffc.FloodFill(new Coord(0, 0)));
         }
@@ -30,7 +30,7 @@ namespace TestSnake
             snake[2] = new Coord(1, 2);
             snake[3] = new Coord(0, 2);
 
-            var ffc = new FloodFillCalculator(5, snake, 4);
+            var ffc = new FloodFillCalculator(5, snake);
 
             Assert.AreEqual(2, ffc.FloodFill(new Coord(0, 0)));
         }
@@ -41,20 +41,10 @@ namespace TestSnake
 
             Coord[] snake = new Coord[0];
   
-            var ffc = new FloodFillCalculator(3, snake, 100);
+            var ffc = new FloodFillCalculator(3, snake);
 
             Assert.AreEqual(9, ffc.FloodFill(new Coord(0, 0)));
         }
 
-        [TestMethod]
-        public void FloodFillLimit()
-        {
-
-            Coord[] snake = new Coord[0];
-
-            var ffc = new FloodFillCalculator(3, snake, 3);
-
-            Assert.AreEqual(3, ffc.FloodFill(new Coord(0, 0)));
-        }
     }
 }
