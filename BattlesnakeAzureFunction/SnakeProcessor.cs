@@ -68,14 +68,13 @@ namespace BattlesnakeAzureFunction
                 var snake = gameState.You.Body.Distinct().ToList();
 
                 var headAfterMove = gameState.You.Head.Move(possibleDirection);
-                snake.Add(headAfterMove);
-
                 var ffc = new FloodFillCalculator(gameState.Board.Width,snake.ToArray());
 
                 int space = ffc.FloodFill(headAfterMove);
                 if(space >= bestSize)
                 {
-                    this.AllowedDirections = bigSpaceDirections;
+                    bigSpaceDirections = new List<Direction> {possibleDirection};
+                    bestSize = space;
                 }
             }
 
