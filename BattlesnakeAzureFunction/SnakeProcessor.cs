@@ -58,7 +58,7 @@ namespace BattlesnakeAzureFunction
         {
             var bigSpaceDirections = new List<Direction>();
 
-            if (AllowedDirections.Count <= 1 || AllowedDirections.Count > 2) return this;
+            if (AllowedDirections.Count <= 1 ) return this;
             Dictionary<Direction, int> spacesByDirections = new Dictionary<Direction, int>();
 
             var snakeBody = gameState.You.Body.Distinct().ToList();
