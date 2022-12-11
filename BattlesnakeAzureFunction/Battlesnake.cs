@@ -48,6 +48,7 @@ namespace BattlesnakeAzureFunction
             var move = sp.StayOnboard()
                 .DontTouchYourself()
                 .DontGoToTightSpace()
+                .AvoidOtherSnakes()
                 .GetMove();
 
             //log.LogInformation($"Game:{gameState.Game.ID} - {gameState.Turn}  Head:{gameState.You.Head}  - Move: {directionToTake}");

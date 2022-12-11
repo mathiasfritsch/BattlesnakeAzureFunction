@@ -54,11 +54,28 @@ namespace BattlesnakeAzureFunction
             return this;
         }
 
+        public SnakeProcessor AvoidOtherSnakes()
+        {
+            var noSnakeDirections = new List<Direction>();
+
+            foreach (var allowedDirection in this.AllowedDirections)
+            {
+                var headAfterMove = gameState.You.Head.Move(allowedDirection);
+                if (gameState.Board.Snakes.All(s => !s.Body.Contains(headAfterMove)))
+                {
+                    noSnakeDirections.Add(allowedDirection);
+                }
+            }
+
+            this.AllowedDirections = noSnakeDirections;
+            return this;
+        }
+
         public SnakeProcessor DontGoToTightSpace()
         {
             var bigSpaceDirections = new List<Direction>();
 
-            if (AllowedDirections.Count <= 1 ) return this;
+            if (AllowedDirections.Count <= 1) return this;
             Dictionary<Direction, int> spacesByDirections = new Dictionary<Direction, int>();
 
             var snakeBody = gameState.You.Body.Distinct().ToList();
@@ -77,7 +94,7 @@ namespace BattlesnakeAzureFunction
                 spacesByDirections[possibleDirection] = ffc.FloodFill(headAfterMove);
             }
 
-            if(spacesByDirections.Any( s => s.Value >= snakeBody.Count))
+            if (spacesByDirections.Any(s => s.Value >= snakeBody.Count))
             {
                 foreach (var spacesByDirection in spacesByDirections.Where(s => s.Value >= snakeBody.Count))
                 {
@@ -86,7 +103,7 @@ namespace BattlesnakeAzureFunction
             }
             else
             {
-                bigSpaceDirections.Add(spacesByDirections.OrderByDescending(s => s.Value).First().Key); 
+                bigSpaceDirections.Add(spacesByDirections.OrderByDescending(s => s.Value).First().Key);
             }
 
             this.AllowedDirections = bigSpaceDirections;
