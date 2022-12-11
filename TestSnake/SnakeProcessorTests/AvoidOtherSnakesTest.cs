@@ -35,15 +35,13 @@ namespace TestSnake.SnakeProcessorTests
                     new Coord(0,3)
                 }
             };
-
-            gameState.Board.Snakes.Add(gameState.You);
-            gameState.Board.Snakes.Add(otherSnake);
-
+            gameState.Board.Snakes = new List<Snake> { 
+                gameState.You, 
+                otherSnake };
 
             var sp = new SnakeProcessor(gameState);
             sp.AvoidOtherSnakes();
-            Assert.AreEqual(3, sp.AllowedDirections.Count);
-
-          }
+            Assert.AreEqual(2, sp.AllowedDirections.Count);
+        }
     }
 }
