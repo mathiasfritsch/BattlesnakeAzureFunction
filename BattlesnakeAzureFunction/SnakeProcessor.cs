@@ -56,26 +56,37 @@ namespace BattlesnakeAzureFunction
 
         public SnakeProcessor DontGoToTightSpace()
         {
-           
             var bigSpaceDirections = new List<Direction>();
 
-            if(AllowedDirections.Count <= 1) return this;
+            if (AllowedDirections.Count <= 1 || AllowedDirections.Count > 2) return this;
+            Dictionary<Direction, int> spacesByDirections = new Dictionary<Direction, int>();
 
-            int bestSize = 0;
+            var snakeBody = gameState.You.Body.Distinct().ToList();
+            var ffcBeforeMove = new FloodFillCalculator(
+                gameState.Board.Width,
+                snakeBody.Where(p => p != gameState.You.Head).ToArray());
 
             foreach (var possibleDirection in AllowedDirections)
             {
+                spacesByDirections.Add(possibleDirection, 0);
+
                 var snake = gameState.You.Body.Distinct().ToList();
 
                 var headAfterMove = gameState.You.Head.Move(possibleDirection);
-                var ffc = new FloodFillCalculator(gameState.Board.Width,snake.ToArray());
+                var ffc = new FloodFillCalculator(gameState.Board.Width, snake.ToArray());
+                spacesByDirections[possibleDirection] = ffc.FloodFill(headAfterMove);
+            }
 
-                int space = ffc.FloodFill(headAfterMove);
-                if(space >= bestSize)
+            if(spacesByDirections.Any( s => s.Value >= snakeBody.Count))
+            {
+                foreach (var spacesByDirection in spacesByDirections.Where(s => s.Value >= snakeBody.Count))
                 {
-                    bigSpaceDirections = new List<Direction> {possibleDirection};
-                    bestSize = space;
+                    bigSpaceDirections.Add(spacesByDirection.Key);
                 }
+            }
+            else
+            {
+                bigSpaceDirections.Add(spacesByDirections.OrderByDescending(s => s.Value).First().Key); 
             }
 
             this.AllowedDirections = bigSpaceDirections;

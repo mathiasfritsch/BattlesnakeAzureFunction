@@ -36,7 +36,6 @@ namespace TestSnake.SnakeProcessorTests
             Assert.AreEqual(Direction.up, sp.AllowedDirections.Single());
         }
 
-
         [TestMethod]
         public void DontGoToTightSpacePrefersBigSpaceOfBoardAndSnake()
         {
@@ -67,6 +66,36 @@ namespace TestSnake.SnakeProcessorTests
                 .DontGoToTightSpace();
 
             Assert.AreEqual(Direction.up, sp.AllowedDirections.Single());
+        }
+
+        [TestMethod]
+        public void DontGoToTightSpaceAnyDirectionOkIfSnakeFits()
+        {
+            var gameState = new GameState();
+
+            gameState.Board = new Board
+            {
+                Width = 5,
+                Height = 5,
+            };
+            gameState.You = new Snake
+            {
+                Body = new List<Coord>
+                {
+                    new Coord(0,2),
+                    new Coord(1,2),
+                    new Coord(2,2),
+                    new Coord(3,2),
+                    new Coord(4,2)
+                }
+            };
+
+            var sp = new SnakeProcessor(gameState);
+            sp.DontTouchYourself()
+                .StayOnboard()
+                .DontGoToTightSpace();
+
+            Assert.AreEqual(2, sp.AllowedDirections.Count());
         }
     }
 }
