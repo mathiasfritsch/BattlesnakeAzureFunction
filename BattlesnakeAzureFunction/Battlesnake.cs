@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using static System.Net.WebRequestMethods;
 
 namespace BattlesnakeAzureFunction
 {
@@ -17,11 +18,13 @@ namespace BattlesnakeAzureFunction
         public static async Task<IActionResult> Echo(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "echo")] HttpRequest request)
         {
-            var username = Environment.GetEnvironmentVariable("UsernameFromKeyVault", EnvironmentVariableTarget.Process);
-            var password = Environment.GetEnvironmentVariable("PasswordFromKeyVault", EnvironmentVariableTarget.Process);
 
 
-            return new OkObjectResult($"OK3 {username} {password}");
+
+            var blobStorageConnection = Environment.GetEnvironmentVariable("BlobStorageFromKeyVault", EnvironmentVariableTarget.Process);
+            
+
+            return new OkObjectResult($"OK3 {blobStorageConnection} ");
         }
 
         [FunctionName("Get")]
