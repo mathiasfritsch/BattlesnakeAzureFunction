@@ -1,3 +1,4 @@
+using Azure.Storage.Blobs;
 using BattlesnakeAzureFunction.Model;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -24,8 +25,24 @@ namespace BattlesnakeAzureFunction
             var blobStorageConnection = Environment.GetEnvironmentVariable("BlobStorageFromKeyVault", EnvironmentVariableTarget.Process);
             
 
+            return new OkObjectResult($"OK3 {blobStorageConnection.Substring(0,10)}");
+        }
+
+        [FunctionName("Blob")]
+        public static async Task<IActionResult> Blob(
+    [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "blob")] HttpRequest request)
+        {
+            var blobStorageConnection = Environment.GetEnvironmentVariable("BlobStorageFromKeyVault", EnvironmentVariableTarget.Process);
+
+            BlobContainerClient client = new BlobContainerClient(blobStorageConnection, "storagetestfritsch");
+
+            BlobClient blobClient = client.GetBlobClient("someblob.txt");
+
+     
+
             return new OkObjectResult($"OK3 {blobStorageConnection} ");
         }
+
 
         [FunctionName("Get")]
         public static async Task<IActionResult> GetBattlesnake(
