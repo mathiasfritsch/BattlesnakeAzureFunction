@@ -1,4 +1,5 @@
 using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
 using BattlesnakeAzureFunction.Model;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +9,8 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
 using System.IO;
+using System.Reflection.Metadata;
+using System.Text;
 using System.Threading.Tasks;
 using static System.Net.WebRequestMethods;
 
@@ -34,13 +37,20 @@ namespace BattlesnakeAzureFunction
         {
             var blobStorageConnection = Environment.GetEnvironmentVariable("BlobStorageFromKeyVault", EnvironmentVariableTarget.Process);
 
-            BlobContainerClient client = new BlobContainerClient(blobStorageConnection, "storagetestfritsch");
+            BlobContainerClient client = new BlobContainerClient(blobStorageConnection, "testcontainer");
 
             BlobClient blobClient = client.GetBlobClient("someblob.txt");
+            string retValue = "";
 
-     
+            if (await blobClient.ExistsAsync())
+            {
+                BlobDownloadInfo download = await blobClient.DownloadAsync();
+                byte[] result = new byte[download.ContentLength];
+                await download.Content.ReadAsync(result, 0, (int)download.ContentLength);
 
-            return new OkObjectResult($"OK3 {blobStorageConnection} ");
+                retValue = Encoding.UTF8.GetString(result);
+            }
+            return new OkObjectResult($"OK3 {retValue} ");
         }
 
 
